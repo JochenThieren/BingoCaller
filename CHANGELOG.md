@@ -11,7 +11,7 @@ The version lives in `BingoCaller/BingoCaller.csproj` (`<Version>`) and must mat
 
 ## [1.0.1] — 2026-09-26
 
-SHA256 (setup_BingoCaller_1.0.1.exe): _added after the release build_
+SHA256 (setup_BingoCaller_1.0.1.exe): `E5947549AF25BC04BCF712ECD4FC3F2077A8C452A105BBE0E9A4FA8EA7141A56`
 
 ### Added
 
