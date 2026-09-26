@@ -1,6 +1,6 @@
 # CRA Scope Statement — BingoCaller
 
-**Product:** BingoCaller 1.0.0 — offline Windows desktop application (.NET 8 WinForms)
+**Product:** BingoCaller 1.0.1 — offline Windows desktop application (.NET 8 WinForms)
 **Author / maintainer:** Jochen Thieren · **Date:** 2026-09-26
 **Regulation:** (EU) 2024/2847, the *Cyber Resilience Act* (CRA)
 

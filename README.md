@@ -7,7 +7,7 @@ sponsor logos, a scrolling banner and an optional photo slideshow.
 Made for clubs, schools, charities and friends. Free to use — see [License](#license) and
 [the spirit of use](#the-spirit-of-use).
 
-> **Status:** version 1.0.0. Windows only. Personal project, maintained in the author's spare time.
+> **Status:** version 1.0.1. Windows only. Personal project, maintained in the author's spare time.
 
 ## Screenshots
 
@@ -79,7 +79,7 @@ administrator rights needed) so the program can save its settings next to itself
 published SHA256 checksum if you like:
 
 ```powershell
-Get-FileHash .\setup_BingoCaller_1.0.0.exe -Algorithm SHA256
+Get-FileHash .\setup_BingoCaller_1.0.1.exe -Algorithm SHA256
 ```
 
 The installer is not code-signed (see [SECURITY.md](SECURITY.md)); Windows SmartScreen may show a warning.

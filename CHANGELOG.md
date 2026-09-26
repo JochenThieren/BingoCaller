@@ -9,7 +9,9 @@ The version lives in `BingoCaller/BingoCaller.csproj` (`<Version>`) and must mat
 
 ---
 
-## [Unreleased]
+## [1.0.1] — 2026-09-26
+
+SHA256 (setup_BingoCaller_1.0.1.exe): _added after the release build_
 
 ### Added
 

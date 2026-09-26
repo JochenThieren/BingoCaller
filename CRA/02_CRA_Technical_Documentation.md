@@ -9,7 +9,7 @@ Legend: ✅ present · ◑ partial · ☐ open · n/a not applicable (with reaso
 ## Product identity
 
 - **Name / type:** BingoCaller — desktop application for calling bingo numbers with a big-screen display
-- **Version:** 1.0.0 (single source: `<Version>` in `BingoCaller/BingoCaller.csproj`; synced by hand with `MyAppVersion` in
+- **Version:** 1.0.1 (single source: `<Version>` in `BingoCaller/BingoCaller.csproj`; synced by hand with `MyAppVersion` in
   `BingoCaller_INNO.iss` and `CHANGELOG.md`; shown in the main window title)
 - **Platform:** Windows 10/11 x64, .NET 8 Desktop Runtime (framework-dependent, single-file publish)
 - **Manufacturer / author:** Jochen Thieren — jochen.thieren@gmail.com
@@ -77,7 +77,7 @@ Legend: ✅ present · ◑ partial · ☐ open · n/a not applicable (with reaso
 |------|-------|--------|
 | (1) | Identify/document vulnerabilities and components (SBOM) | ✅ sbom.json, SECURITY_REVIEW |
 | (2) | Address vulnerabilities without delay; provide security updates | ✅ policy in SECURITY.md |
-| (3) | Regular, effective tests and reviews | ◑ review done for 1.0.0; repeat each release (checklist in 04) |
+| (3) | Regular, effective tests and reviews | ◑ review done for 1.0.0, with an addendum for the 1.0.1 features; repeat each release (checklist in 04) |
 | (4) | Publicly disclose fixed vulnerabilities | ✅ via CHANGELOG / GitHub advisories |
 | (5) | Coordinated vulnerability disclosure policy | ✅ SECURITY.md |
 | (6) | Facilitate sharing of vulnerability information (contact) | ✅ GitHub private reporting + e-mail |

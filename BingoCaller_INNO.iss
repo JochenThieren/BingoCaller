@@ -15,7 +15,7 @@
 ;   local user replace the exe/DLLs (privilege escalation), so this script deliberately does neither.
 
 #define MyAppName      "BingoCaller"
-#define MyAppVersion   "1.0.0"
+#define MyAppVersion   "1.0.1"
 #define MyAppPublisher "Jochen Thieren"
 ; Assumed repository address -- change if the repository is named differently.
 #define MyAppURL       "https://github.com/JochenThieren/BingoCaller"

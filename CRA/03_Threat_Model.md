@@ -1,4 +1,4 @@
-# Threat Model & Risk Assessment — BingoCaller 1.0.0
+# Threat Model & Risk Assessment — BingoCaller 1.0.1
 
 Method: lightweight STRIDE-style walk through assets, trust boundaries and actors. Companion to the
 [source review](../SECURITY_REVIEW_2026-09-26.md).

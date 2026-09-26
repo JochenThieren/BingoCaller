@@ -1,6 +1,6 @@
 # Gap-Closure Checklist — BingoCaller
 
-State: **2026-09-26**, version 1.0.0. Priority: **P1** = do soon · **P2** = worthwhile · **P3** = nice to have.
+State: **2026-09-26**, version 1.0.1. Priority: **P1** = do soon · **P2** = worthwhile · **P3** = nice to have.
 
 ## A. Open items
 
@@ -14,7 +14,6 @@ State: **2026-09-26**, version 1.0.0. Priority: **P1** = do soon · **P2** = wor
 | 6 | P2 | `validateImageData: false` on image decode | Switch to `true` and measure the load-time cost — review finding 3 |
 | 7 | P2 | No automated tests / CI | Add a GitHub Actions workflow (build on `windows-latest`) and a few unit tests for `DisplaySettings` (load/normalise/reset) |
 | 8 | P3 | SBOM is hand-maintained | Generate with the CycloneDX .NET tool in `Build-Release.ps1` once any package is added |
-| 9 | P3 | No app icon | Add an `.ico` (`ApplicationIcon` + installer `SetupIconFile`) |
 
 ## B. Done
 
@@ -26,6 +25,7 @@ State: **2026-09-26**, version 1.0.0. Priority: **P1** = do soon · **P2** = wor
 - ✅ Per-user installer (no elevation, no writable-Program-Files pattern); SHA256 written by `Build-Release.ps1`
 - ✅ Secure defaults and a one-click **Reset all to defaults**; uninstaller removes the settings file
 - ✅ No third-party dependencies, no network access, no secrets
+- ✅ Application icon (exe, all windows and dialogs, installer wizard)
 
 ## C. Per-release routine
 

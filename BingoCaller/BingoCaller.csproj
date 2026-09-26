@@ -11,7 +11,7 @@
     <ApplicationIcon>BingoCaller.ico</ApplicationIcon>
 
     <!-- Product identity. Keep <Version> in sync with MyAppVersion in BingoCaller_INNO.iss and CHANGELOG.md. -->
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <Authors>Jochen Thieren</Authors>
     <Product>BingoCaller</Product>
     <Description>Bingo number caller with a big-screen display for a projector or TV: slideshow background, scrolling sponsor banner and logos, multi-monitor support.</Description>

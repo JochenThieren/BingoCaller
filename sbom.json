@@ -13,12 +13,12 @@
     "authors": [ { "name": "Jochen Thieren" } ],
     "component": {
       "type": "application",
-      "bom-ref": "pkg:generic/BingoCaller@1.0.0",
+      "bom-ref": "pkg:generic/BingoCaller@1.0.1",
       "name": "BingoCaller",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "description": "Bingo number caller with a big-screen display (slideshow background, scrolling banner, sponsor logos, multi-monitor). Offline .NET 8 WinForms desktop application.",
       "licenses": [ { "license": { "id": "MIT" } } ],
-      "purl": "pkg:generic/BingoCaller@1.0.0",
+      "purl": "pkg:generic/BingoCaller@1.0.1",
       "supplier": { "name": "Jochen Thieren" },
       "properties": [
         { "name": "bingocaller:network-access", "value": "none" },
@@ -51,7 +51,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:generic/BingoCaller@1.0.0",
+      "ref": "pkg:generic/BingoCaller@1.0.1",
       "dependsOn": [
         "pkg:generic/Microsoft.WindowsDesktop.App@8",
         "pkg:generic/windows-gdi"
