@@ -34,6 +34,8 @@ First public release.
 
 SHA256 (setup_BingoCaller_1.0.0.exe): `D0554BAE2A85653D06C75B6CCD5AEDE5E4E8B46BADD59A91C9104F6A3D1DE2B1`
 
+> The 1.0.0 installer was withdrawn shortly after publication and is **superseded by 1.0.1**; the checksum above refers to that withdrawn file. Use the 1.0.1 installer.
+
 ### Added
 
 - Caller window with 75 number buttons (B-I-N-G-O columns), **Undo** and **Reset**.
