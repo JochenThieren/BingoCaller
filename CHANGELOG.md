@@ -13,7 +13,7 @@ The version lives in `BingoCaller/BingoCaller.csproj` (`<Version>`) and must mat
 
 First public release.
 
-SHA256 (setup_BingoCaller_1.0.0.exe): _added by `Build-Release.ps1` when the release is built_
+SHA256 (setup_BingoCaller_1.0.0.exe): `D0554BAE2A85653D06C75B6CCD5AEDE5E4E8B46BADD59A91C9104F6A3D1DE2B1`
 
 ### Added
 
