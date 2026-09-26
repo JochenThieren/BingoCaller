@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Product identity. Keep <Version> in sync with MyAppVersion in BingoCaller_INNO.iss and CHANGELOG.md. -->
+    <Version>1.0.0</Version>
+    <Authors>Jochen Thieren</Authors>
+    <Product>BingoCaller</Product>
+    <Description>Bingo number caller with a big-screen display for a projector or TV: slideshow background, scrolling sponsor banner and logos, multi-monitor support.</Description>
+    <Copyright>Copyright (c) 2026 Jochen Thieren</Copyright>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,25 @@
+# Visual Studio / build output
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.rsuser
+*.userosscache
+*.sln.docstates
+TestResults/
+*.log
+
+# Release output (built by Build-Release.ps1)
+publish_BingoCaller/
+dist/
+
+# A user's own configuration -- never commit (contains local file paths)
+*.settings.json
+
+# Local scratch notes (contains text copied from a website)
+BingoCaller/INFO.txt
+
+# OS / editor noise
+Thumbs.db
+.DS_Store

@@ -1,0 +1,61 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:7b3e9a52-4c18-4d6f-a0e1-92f5c8d13b64",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-26T00:00:00Z",
+    "tools": {
+      "components": [
+        { "type": "application", "author": "Anthropic", "name": "Claude Code" }
+      ]
+    },
+    "authors": [ { "name": "Jochen Thieren" } ],
+    "component": {
+      "type": "application",
+      "bom-ref": "pkg:generic/BingoCaller@1.0.0",
+      "name": "BingoCaller",
+      "version": "1.0.0",
+      "description": "Bingo number caller with a big-screen display (slideshow background, scrolling banner, sponsor logos, multi-monitor). Offline .NET 8 WinForms desktop application.",
+      "licenses": [ { "license": { "id": "MIT" } } ],
+      "purl": "pkg:generic/BingoCaller@1.0.0",
+      "supplier": { "name": "Jochen Thieren" },
+      "properties": [
+        { "name": "bingocaller:network-access", "value": "none" },
+        { "name": "bingocaller:third-party-packages", "value": "0" }
+      ]
+    }
+  },
+  "components": [
+    {
+      "type": "framework",
+      "bom-ref": "pkg:generic/Microsoft.WindowsDesktop.App@8",
+      "name": "Microsoft .NET 8 Desktop Runtime (Microsoft.WindowsDesktop.App)",
+      "version": "8.x",
+      "description": "Runtime required to run the application. NOT bundled: installed separately by the user (the installer checks for it and points to the Microsoft download page).",
+      "licenses": [ { "license": { "id": "MIT" } } ],
+      "supplier": { "name": "Microsoft" },
+      "scope": "required",
+      "properties": [ { "name": "bingocaller:bundled", "value": "false" } ]
+    },
+    {
+      "type": "operating-system",
+      "bom-ref": "pkg:generic/windows-gdi",
+      "name": "Microsoft Windows (GDI/GDI+: gdi32.dll, msimg32.dll)",
+      "version": "10 or 11, x64",
+      "description": "System imaging and drawing libraries called by the application (image decoding via GDI+, blitting via gdi32/msimg32). Provided and updated by Windows; not bundled.",
+      "supplier": { "name": "Microsoft" },
+      "scope": "required",
+      "properties": [ { "name": "bingocaller:bundled", "value": "false" } ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "pkg:generic/BingoCaller@1.0.0",
+      "dependsOn": [
+        "pkg:generic/Microsoft.WindowsDesktop.App@8",
+        "pkg:generic/windows-gdi"
+      ]
+    }
+  ]
+}
