@@ -92,6 +92,25 @@ see [SECURITY.md](SECURITY.md) and do **not** file a public issue.
 | [sbom.json](sbom.json) | Software Bill of Materials (CycloneDX) |
 | [SECURITY_REVIEW_2026-09-26.md](SECURITY_REVIEW_2026-09-26.md) | Source-level security review |
 | [CRA/](CRA/) | EU Cyber Resilience Act scope statement, technical documentation, threat model, gap checklist |
+| [Disclaimer](#disclaimer) | No warranty, your responsibility for the game, local gambling law, third-party logos |
+
+## Disclaimer
+
+- **No warranty.** BingoCaller is provided "as is", without warranty of any kind (see the [MIT License](LICENSE)). The
+  author is not liable for any damage or loss arising from its use — including a failure or display error during an
+  event. Test it with your equipment before the evening starts, and keep a paper backup of the called numbers.
+- **You are responsible for the game.** The program only records and displays the numbers that *you* enter. It does not
+  draw numbers and cannot guarantee that a draw is fair or that a card is a winner. It is not a certified gaming device.
+- **Follow the law.** Bingo, lotteries and raffles — especially with money or prizes — are regulated in many countries
+  and may need a licence or permit. Finding out and following the rules that apply to your event is the organiser's job,
+  not the software's.
+- **Your content, your rights.** Pictures, logos and names you load (sponsors, photos) are not included with the program;
+  you must have the right to show them. All trademarks and logos belong to their respective owners, and nothing here
+  implies endorsement by them.
+- **Independent project.** This is a personal, non-commercial project. It is not a product of, and not endorsed by, any
+  employer, company or sponsor. Microsoft, Windows and .NET are trademarks of Microsoft Corporation.
+- **Not legal advice.** The documents in [`CRA/`](CRA/) and [`SECURITY.md`](SECURITY.md) are the author's good-faith
+  information, not legal advice or a compliance certificate.
 
 ## License
 
