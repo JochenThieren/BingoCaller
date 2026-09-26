@@ -41,9 +41,9 @@
     {
       "type": "operating-system",
       "bom-ref": "pkg:generic/windows-gdi",
-      "name": "Microsoft Windows (GDI/GDI+: gdi32.dll, msimg32.dll)",
+      "name": "Microsoft Windows (GDI/GDI+: gdi32.dll, msimg32.dll; audio: winmm.dll)",
       "version": "10 or 11, x64",
-      "description": "System imaging and drawing libraries called by the application (image decoding via GDI+, blitting via gdi32/msimg32). Provided and updated by Windows; not bundled.",
+      "description": "System imaging, drawing and audio libraries called by the application (image decoding via GDI+, blitting via gdi32/msimg32, the optional draw sound via System.Media.SoundPlayer/winmm). Provided and updated by Windows; not bundled.",
       "supplier": { "name": "Microsoft" },
       "scope": "required",
       "properties": [ { "name": "bingocaller:bundled", "value": "false" } ]

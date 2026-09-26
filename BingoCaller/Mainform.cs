@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace BingoCaller
@@ -29,16 +30,22 @@ namespace BingoCaller
         private readonly List<DisplayForm> _displays = new List<DisplayForm>();
         private Button _pauseButton;
         private bool _paused;
+        private bool _drawing;                       // a random draw animation is running
+        private int _drawPick;
+        private Button _randomButton;
+        private System.Windows.Forms.Timer? _drawTimer;
+        private readonly HashSet<int> _randomDrawn = new HashSet<int>();   // numbers that came from the random draw
         private bool _displayClosedByUser;
 
         public MainForm()
         {
             Version? version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             Text = version == null ? "Bingo Caller" : $"Bingo Caller {version.Major}.{version.Minor}.{version.Build}";
+            Icon = AppIcon.Get();
             BackColor = Color.FromArgb(240, 242, 248);
             StartPosition = FormStartPosition.CenterScreen;
-            MinimumSize = new Size(860, 700);
-            ClientSize = new Size(900, 800);
+            MinimumSize = new Size(1040, 700);   // the status text needs room next to the six buttons
+            ClientSize = new Size(1100, 800);
 
             // ---------------- top bar ----------------
             var top = new TableLayoutPanel
@@ -79,6 +86,10 @@ namespace BingoCaller
             _resetButton = MakeToolButton("Reset");
             _resetButton.Click += (s, e) => ResetAll();
 
+            _randomButton = MakeToolButton("Random draw");
+            _randomButton.Click += (s, e) => RandomDraw();
+            _randomButton.Visible = false;   // enabled in Options
+
             Button screenButton = MakeToolButton("Big Screen");
             screenButton.Click += (s, e) => ShowBigScreen();
 
@@ -93,6 +104,7 @@ namespace BingoCaller
             tools.Controls.Add(optionsButton);
             tools.Controls.Add(_undoButton);
             tools.Controls.Add(_resetButton);
+            tools.Controls.Add(_randomButton);
             tools.Controls.Add(_pauseButton);
             tools.Controls.Add(screenButton);
 
@@ -203,7 +215,7 @@ namespace BingoCaller
 
         private void NumberButton_Click(object sender, EventArgs e)
         {
-            if (_paused) return;   // paused: the big screens show the slideshow, nothing may change
+            if (_paused || _drawing) return;   // paused / drawing: nothing may change
 
             var btn = (Button)sender;
             int number = (int)btn.Tag;
@@ -213,11 +225,12 @@ namespace BingoCaller
             CallNumber(number);
         }
 
-        private void CallNumber(int number)
+        private void CallNumber(int number, bool random = false)
         {
             if (_paused) return;
 
             _called.Add(number);
+            if (random) _randomDrawn.Add(number);
 
             RefreshGrid();
             UpdateStatus();
@@ -226,8 +239,9 @@ namespace BingoCaller
 
         private void UndoLast()
         {
-            if (_paused || _called.Count == 0) return;
+            if (_paused || _drawing || _called.Count == 0) return;
 
+            _randomDrawn.Remove(_called[_called.Count - 1]);
             _called.RemoveAt(_called.Count - 1);
 
             RefreshGrid();
@@ -237,6 +251,8 @@ namespace BingoCaller
 
         private void ResetAll()
         {
+            if (_drawing) return;
+
             if (_called.Count > 0 &&
                 MessageBox.Show(this,
                     "Clear all called numbers and start a new game?",
@@ -248,6 +264,7 @@ namespace BingoCaller
             }
 
             _called.Clear();
+            _randomDrawn.Clear();
 
             RefreshGrid();
             UpdateStatus();
@@ -283,7 +300,12 @@ namespace BingoCaller
 
         private void UpdateStatus()
         {
-            if (_paused)
+            if (_drawing)
+            {
+                _statusLabel.Text = "Drawing a random number...";
+                _statusLabel.ForeColor = Color.FromArgb(230, 190, 40);
+            }
+            else if (_paused)
             {
                 _statusLabel.Text = $"PAUSED   ({_called.Count} of {TotalNumbers} called)";
                 _statusLabel.ForeColor = Color.FromArgb(230, 150, 40);
@@ -304,8 +326,78 @@ namespace BingoCaller
                 _statusLabel.ForeColor = DisplayForm.ColumnColors[col];
             }
 
-            _undoButton.Enabled = _called.Count > 0 && !_paused;
-            _resetButton.Enabled = _called.Count > 0;   // still allowed while paused (e.g. new game during a break)
+            UpdateControls();
+        }
+
+        /// <summary>One place that decides which controls may be used: paused or drawing locks the game.</summary>
+        private void UpdateControls()
+        {
+            bool locked = _paused || _drawing;
+
+            foreach (Button b in _buttons.Values)
+                b.Enabled = !locked;
+
+            _undoButton.Enabled = _called.Count > 0 && !locked;
+            _resetButton.Enabled = _called.Count > 0 && !_drawing;   // allowed while paused (new game during a break)
+            _pauseButton.Enabled = !_drawing;
+
+            _randomButton.Visible = _settings.EnableRandomDraw;
+            _randomButton.Enabled = !locked && _called.Count < TotalNumbers;
+        }
+
+        // ------------------------------------------------------------------
+        //  Random draw (optional backup for a missing ball)
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// Picks one of the numbers that have not been called, uniformly, from the operating system's
+        /// cryptographic random generator (GetInt32 rejects skewed values, so there is no modulo bias).
+        /// Returns -1 when every number has been called.
+        /// </summary>
+        internal static int PickRandom(IEnumerable<int> called)
+        {
+            var taken = new HashSet<int>(called);
+            var remaining = new List<int>(TotalNumbers);
+            for (int n = 1; n <= TotalNumbers; n++)
+                if (!taken.Contains(n)) remaining.Add(n);
+
+            return remaining.Count == 0 ? -1 : remaining[RandomNumberGenerator.GetInt32(remaining.Count)];
+        }
+
+        private void RandomDraw()
+        {
+            if (_paused || _drawing || !_settings.EnableRandomDraw) return;
+
+            // The result is decided here, first; the animation on the big screens is only the reveal.
+            int pick = PickRandom(_called);
+            if (pick < 0) return;
+
+            _drawing = true;
+            _drawPick = pick;
+            UpdateStatus();
+
+            _displays.RemoveAll(d => d.IsDisposed);
+            if (_displays.Count == 0 && !_displayClosedByUser)
+                OpenDisplay(null);
+
+            foreach (DisplayForm d in _displays.ToList())
+                d.PlayDraw(pick, _called);
+
+            if (_settings.DrawSound) DrawSound.Play();   // one clip, built from the same schedule as the animation
+
+            // With no big screen open there is nothing to wait for.
+            _drawTimer ??= new System.Windows.Forms.Timer();
+            _drawTimer.Tick -= DrawFinished;
+            _drawTimer.Tick += DrawFinished;
+            _drawTimer.Interval = _displays.Count > 0 ? DisplayForm.DrawDurationMs + 150 : 50;
+            _drawTimer.Start();
+        }
+
+        private void DrawFinished(object? sender, EventArgs e)
+        {
+            _drawTimer!.Stop();
+            _drawing = false;
+            CallNumber(_drawPick, random: true);
         }
 
         // ------------------------------------------------------------------
@@ -325,6 +417,7 @@ namespace BingoCaller
                 _settings.Save();
                 foreach (DisplayForm d in _displays.ToList())
                     if (!d.IsDisposed) d.ApplySettings(_settings);
+                UpdateControls();
             });
             _options.Show(this);
         }
@@ -338,7 +431,7 @@ namespace BingoCaller
                 OpenDisplay(null);
 
             foreach (DisplayForm d in _displays.ToList())
-                d.UpdateDisplay(_called);
+                d.UpdateDisplay(_called, _randomDrawn);
         }
 
         /// <summary>Opens one big-screen window, full-screen on <paramref name="screen"/> when given.</summary>
@@ -354,20 +447,20 @@ namespace BingoCaller
 
             display.Show();
             if (screen != null) display.EnterFullScreen(screen);
-            display.UpdateDisplay(_called);
+            display.UpdateDisplay(_called, _randomDrawn);
             if (_paused) display.SetPaused(true);
             return display;
         }
 
         private void TogglePause()
         {
+            if (_drawing) return;
+
             _paused = !_paused;
             _pauseButton.Text = _paused ? "Resume" : "Pause";
             _pauseButton.BackColor = _paused ? Color.FromArgb(200, 120, 20) : Color.FromArgb(52, 58, 80);
 
             // Block picking while paused: the number buttons go grey, Undo is disabled, the status line says PAUSED.
-            foreach (Button b in _buttons.Values)
-                b.Enabled = !_paused;
             UpdateStatus();
 
             _displays.RemoveAll(d => d.IsDisposed);
@@ -412,6 +505,8 @@ namespace BingoCaller
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             base.OnFormClosing(e);
+
+            DrawSound.Stop();
 
             foreach (DisplayForm d in _displays.ToList())
                 if (!d.IsDisposed) d.Close();

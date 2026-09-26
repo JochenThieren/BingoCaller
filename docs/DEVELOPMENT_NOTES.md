@@ -51,3 +51,25 @@ non-confidential test images.
 dotnet build BingoCaller.slnx -c Release
 .\Build-Release.ps1        # publish (single file, framework-dependent) -> Inno Setup -> .\dist\ + .sha256
 ```
+
+## Documentation assets
+
+- `assets/dummy-logos/`, `assets/dummy-slides/` and `assets/dummy_banner_bingo_night.png` are **original, generated
+  placeholders** (fictional business names, drawn with GDI+) used only for the screenshots. Nothing in them is a real
+  brand or third-party artwork; keep it that way — never put a real sponsor's logo into the repository.
+- `assets/BingoCaller_icon_*.png` is the application icon master; `BingoCaller/BingoCaller.ico` (10 sizes, PNG for 256 px)
+  is built from it.
+- `docs/screenshots/` were taken from the **real windows** (`DisplayForm`, `MainForm`, `OptionsForm`, `ScreenPickerForm`)
+  with `Graphics.CopyFromScreen` against a plain backdrop window (so window shadows never capture the desktop), using the
+  dummy files copied to a short neutral folder so the Options tabs show tidy paths. The throw-away capture programs are
+  not part of the repository.
+
+## Random draw (optional backup)
+
+- `MainForm.RandomDraw` **picks first** (`PickRandom`, `RandomNumberGenerator.GetInt32`, uniform over the not-yet-called
+  numbers) and only then tells every `DisplayForm` to `PlayDraw` the reveal animation; the animation cannot change the result.
+  `MainForm` waits `DisplayForm.DrawDurationMs` (+150 ms) and then calls the number with `random: true`.
+- While `_drawing` (or `_paused`) `UpdateControls` locks the number buttons, Undo, Reset (drawing only), Pause and the button
+  itself — keep all enable/disable logic there. Randomly drawn numbers are kept in `_randomDrawn` and shown as a dot on the chip
+  (`InkText.Marker`); Undo and Reset keep that set in step.
+- The animation's own `System.Random` is for the visual roll only — never use it for the pick.

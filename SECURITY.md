@@ -4,7 +4,8 @@
 
 BingoCaller is a small, **offline** Windows desktop application (.NET 8 WinForms) for calling bingo numbers and
 showing them on a big screen. It makes **no network connections**, runs **no other programs**, uses **no
-registry, database or cryptography**, and has **no runtime dependencies** beyond the .NET 8 Desktop Runtime and
+registry or database**, uses cryptography **only** for the optional random-draw button (the operating system's random number
+generator; nothing is encrypted or signed), and has **no runtime dependencies** beyond the .NET 8 Desktop Runtime and
 Windows itself. Its only inputs are the clicks of the operator, image files the operator chooses, and one local
 settings file. See [SECURITY_REVIEW_2026-09-26.md](SECURITY_REVIEW_2026-09-26.md) for the source-level review.
 
@@ -48,7 +49,7 @@ in the release notes unless they prefer otherwise. Fixed vulnerabilities are des
 ## Dependencies / supply chain
 
 No NuGet packages and no bundled third-party binaries. Only the .NET 8 Desktop Runtime (installed separately) and
-Windows system libraries (`gdi32`, `msimg32`, GDI+). See [sbom.json](sbom.json).
+Windows system libraries (`gdi32`, `msimg32`, GDI+, and `winmm` for the optional draw sound). See [sbom.json](sbom.json).
 
 ## Known limitations
 

@@ -33,6 +33,13 @@ namespace BingoCaller
         private bool _adjustingFonts;
         private bool _fontsPending;
         private bool _idle = true;
+
+        // random-draw animation
+        private readonly InkText _drawTag;
+        private System.Windows.Forms.Timer? _drawTimer;
+        private List<DrawStep>? _drawPlan;
+        private int _drawIndex;
+        private readonly record struct DrawStep(int Number, int HoldMs, bool Gold);
         private FormBorderStyle _prevBorder;
         private Rectangle _prevBounds;
 
@@ -40,6 +47,7 @@ namespace BingoCaller
         {
             _settings = settings;
             Text = "Bingo - Big Screen";
+            Icon = AppIcon.Get();
             BackColor = Color.FromArgb(14, 16, 24);
             StartPosition = FormStartPosition.CenterScreen;
             MinimumSize = new Size(700, 500);
@@ -98,8 +106,12 @@ namespace BingoCaller
                 _backdrop.RectangleToClient(_numberLabel.RectangleToScreen(_numberLabel.ClientRectangle));
             _backdrop.StripBounds = () =>
                 _backdrop.RectangleToClient(_history.RectangleToScreen(_history.ClientRectangle));
+            _drawTag = new InkText { BackColor = Color.Transparent, ForeColor = Color.FromArgb(255, 224, 80), Text = "RANDOM DRAW", Visible = false };
             _backdrop.Controls.Add(_layout);
+            _backdrop.Controls.Add(_drawTag);      // over the layout
+            _drawTag.BringToFront();
             Controls.Add(_backdrop);
+            FormClosed += (s, e) => _drawTimer?.Dispose();
             _backdrop.Resize += (s, e) => UpdateSponsorRow();
             _backdrop.Apply(settings);
             UpdateSponsorRow();
@@ -169,8 +181,10 @@ namespace BingoCaller
         // ------------------------------------------------------------------
 
         /// <summary>Redraws the whole display from the list of called numbers.</summary>
-        public void UpdateDisplay(IReadOnlyList<int> called)
+        public void UpdateDisplay(IReadOnlyList<int> called, ISet<int>? randomDrawn = null)
         {
+            StopDraw();
+
             _history.SuspendLayout();
             var oldChips = new Control[_history.Controls.Count];
             _history.Controls.CopyTo(oldChips, 0);
@@ -197,7 +211,7 @@ namespace BingoCaller
                 for (int i = 0; i < called.Count; i++)
                 {
                     int n = called[i];
-                    _history.Controls.Add(MakeHistoryChip(n, (n - 1) / 15));
+                    _history.Controls.Add(MakeHistoryChip(n, (n - 1) / 15, randomDrawn != null && randomDrawn.Contains(n)));
                 }
             }
 
@@ -206,6 +220,95 @@ namespace BingoCaller
 
             LayoutHistory();
             _history.ResumeLayout();
+        }
+
+        // ------------------------------------------------------------------
+        //  Random-draw animation: the number rolls through the remaining numbers, slowing down,
+        //  then lands and flashes. The result is decided by MainForm; this is only the reveal.
+        // ------------------------------------------------------------------
+
+        private const int DrawFlashMs = 110, DrawFlashes = 5;
+
+        /// <summary>Hold times of the rolling frames: start fast (45 ms) and slow down by 10 % per frame.</summary>
+        internal static List<int> DrawHolds()
+        {
+            var holds = new List<int>();
+            double hold = 45, elapsed = 0;
+            while (elapsed < 2100) { holds.Add((int)hold); elapsed += hold; hold *= 1.10; }
+            return holds;
+        }
+
+        /// <summary>Total length of the animation; MainForm waits this long before it calls the number.</summary>
+        public static readonly int DrawDurationMs = DrawHolds().Sum() + DrawFlashMs * DrawFlashes;
+
+        public void PlayDraw(int finalNumber, IReadOnlyList<int> alreadyCalled)
+        {
+            StopDraw();
+
+            var called = new HashSet<int>(alreadyCalled);
+            var pool = Enumerable.Range(1, MaxNumbers).Where(n => !called.Contains(n)).ToList();
+            if (pool.Count == 0) return;
+
+            var rnd = new Random();   // visual only: the real pick was made with the cryptographic generator
+            var plan = new List<DrawStep>();
+            int previous = -1;
+            foreach (int hold in DrawHolds())
+            {
+                int n;
+                do { n = pool[rnd.Next(pool.Count)]; } while (n == previous && pool.Count > 1);
+                plan.Add(new DrawStep(n, hold, false));
+                previous = n;
+            }
+            for (int i = 0; i < DrawFlashes; i++)
+                plan.Add(new DrawStep(finalNumber, DrawFlashMs, i % 2 == 0));
+
+            _drawPlan = plan;
+            _drawIndex = 0;
+
+            _idle = false;          // hides the big idle banner while the numbers roll
+            UpdateHero();
+
+            PositionDrawTag();
+            _drawTag.Visible = true;
+
+            if (_drawTimer == null)
+            {
+                _drawTimer = new System.Windows.Forms.Timer();
+                _drawTimer.Tick += (s, e) => DrawTick();
+            }
+            _drawTimer.Interval = 1;
+            _drawTimer.Start();
+        }
+
+        private void DrawTick()
+        {
+            _drawTimer!.Stop();
+            if (_drawPlan == null || _drawIndex >= _drawPlan.Count) { _drawTag.Visible = false; return; }
+
+            DrawStep step = _drawPlan[_drawIndex++];
+            int col = (step.Number - 1) / 15;
+            _letterLabel.Text = "BINGO"[col].ToString();
+            _letterLabel.ForeColor = ColumnColors[col];
+            _numberLabel.Text = step.Number.ToString();
+            _numberLabel.ForeColor = step.Gold ? Color.FromArgb(255, 224, 80) : Color.White;
+
+            _drawTimer.Interval = Math.Max(1, step.HoldMs);
+            _drawTimer.Start();
+        }
+
+        private void StopDraw()
+        {
+            _drawTimer?.Stop();
+            _drawPlan = null;
+            _drawTag.Visible = false;
+        }
+
+        private void PositionDrawTag()
+        {
+            Rectangle nb = _backdrop.RectangleToClient(_numberLabel.RectangleToScreen(_numberLabel.ClientRectangle));
+            _drawTag.SetBounds(nb.X, nb.Y + 6, nb.Width, 46);
+            _drawTag.SetFont("Segoe UI", true, 30);
+            _drawTag.BringToFront();
         }
 
         public void EnterFullScreen(Screen screen)
@@ -238,10 +341,11 @@ namespace BingoCaller
 
         private const int MaxNumbers = 75;
 
-        private static InkText MakeHistoryChip(int number, int col)
+        private static InkText MakeHistoryChip(int number, int col, bool random)
         {
             return new InkText
             {
+                Marker = random,
                 Text = number.ToString(),
                 ForeColor = Color.White,
                 BackColor = ColumnColors[col]

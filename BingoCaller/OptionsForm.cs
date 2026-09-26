@@ -20,6 +20,7 @@ namespace BingoCaller
             _changed = changed;
 
             Text = "Bingo options";
+            Icon = AppIcon.Get();
             Font = new Font("Segoe UI", 9.5f);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -52,6 +53,7 @@ namespace BingoCaller
             _tabs.TabPages.Add(BuildSlideshowTab());
             _tabs.TabPages.Add(BuildBannerTab());
             _tabs.TabPages.Add(BuildLogosTab());
+            _tabs.TabPages.Add(BuildDrawTab());
             _tabs.SelectedIndex = Math.Clamp(selectedIndex, 0, _tabs.TabPages.Count - 1);
             Controls.Add(_tabs);
             _tabs.BringToFront();   // Fill must be laid out after the bottom panel
@@ -229,8 +231,8 @@ namespace BingoCaller
                 secLabel, seconds, shuffle, crop
             });
 
-            AddSlider(page, "Slideshow opacity", 348, 130, 0, 100, _s.SlideOpacityPercent, v => _s.SlideOpacityPercent = v);
-            AddSlider(page, "Numbers strip opacity", 396, 130, 0, 100, _s.StripOpacityPercent, v => _s.StripOpacityPercent = v);
+            AddSlider(page, "Slideshow opacity", 348, 160, 0, 100, _s.SlideOpacityPercent, v => _s.SlideOpacityPercent = v);
+            AddSlider(page, "Numbers strip opacity", 396, 160, 0, 100, _s.StripOpacityPercent, v => _s.StripOpacityPercent = v);
 
             page.Controls.Add(new Label
             {
@@ -303,7 +305,7 @@ namespace BingoCaller
             page.Controls.Add(new Label
             {
                 Text = "Height is a percentage of the big-screen height. The scrolling banner uses the images from the Background slideshow tab. The Pause button on the caller window shows the slideshow alone, full screen.",
-                Left = 12, Top = 366, Width = 545, Height = 44, ForeColor = Color.DimGray
+                Left = 12, Top = 366, Width = 545, Height = 66, ForeColor = Color.DimGray
             });
             return page;
         }
@@ -342,6 +344,57 @@ namespace BingoCaller
                 Text = "Top and middle logos sit in the corners over the picture. The bottom row is only as tall as the\r\nbottom logos are drawn. Heights are a percentage of the big-screen height.",
                 Left = 12, Top = 448, Width = 545, Height = 40, ForeColor = Color.DimGray
             });
+            return page;
+        }
+
+        // ------------------------------------------------------------------
+        //  Random draw
+        // ------------------------------------------------------------------
+
+        private TabPage BuildDrawTab()
+        {
+            var page = new TabPage("Random draw") { Padding = new Padding(8) };
+
+            var enable = new CheckBox
+            {
+                Text = "Show a \"Random draw\" button on the caller window",
+                Left = 14, Top = 18, Width = 520, Height = 28, Checked = _s.EnableRandomDraw
+            };
+            enable.CheckedChanged += (s, e) => { _s.EnableRandomDraw = enable.Checked; Changed(); };
+
+            var what = new Label
+            {
+                Left = 14, Top = 58, Width = 540, Height = 190,
+                Text =
+                    "A backup for when a physical ball is missing.\r\n\r\n" +
+                    "The button picks one of the numbers that have not been called yet, with the computer's " +
+                    "cryptographic random number generator (every remaining number is equally likely). The big " +
+                    "screens then reveal it with a short animation of about three seconds: the number rolls " +
+                    "through the remaining numbers, slows down and lands. The number is then called " +
+                    "automatically, and Undo works as usual.\r\n\r\n" +
+                    "Numbers that came from the random draw get a small dot in the numbers strip, so everybody " +
+                    "can see which ones were not drawn from the ball machine."
+            };
+
+            var sound = new CheckBox
+            {
+                Text = "Play a ticking sound and a chime during the draw",
+                Left = 14, Top = 254, Width = 400, Height = 28, Checked = _s.DrawSound
+            };
+            sound.CheckedChanged += (s, e) => { _s.DrawSound = sound.Checked; Changed(); };
+
+            var sample = MakeButton("Play sample", 424, 252, 110);
+            sample.Click += (s, e) => DrawSound.Play();
+
+            var note = new Label
+            {
+                Left = 14, Top = 306, Width = 540, Height = 70, ForeColor = Color.DimGray,
+                Text =
+                    "Not a certified gaming device. If your event involves money or prizes, check the local " +
+                    "rules on lotteries and bingo before you use a software draw (see the Disclaimer in the README)."
+            };
+
+            page.Controls.AddRange(new Control[] { enable, what, sound, sample, note });
             return page;
         }
 

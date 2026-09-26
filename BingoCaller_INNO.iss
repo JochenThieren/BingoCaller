@@ -49,6 +49,8 @@ SolidCompression=yes
 WizardStyle=modern
 LicenseFile={#SourcePath}LICENSE
 UninstallDisplayIcon={app}\{#MyAppExeName}
+; Wizard/uninstaller branding; the exe embeds the same icon (ApplicationIcon in the csproj).
+SetupIconFile={#SourcePath}BingoCaller\BingoCaller.ico
 ; Not code-signed (no certificate): integrity is via the SHA256 file published with each release.
 
 [Languages]

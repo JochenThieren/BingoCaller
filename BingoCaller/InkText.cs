@@ -22,6 +22,15 @@ namespace BingoCaller
             TabStop = false;
         }
 
+        private bool _marker;
+
+        /// <summary>Draws a small dot in the top-right corner (used for numbers that came from the random draw).</summary>
+        public bool Marker
+        {
+            get => _marker;
+            set { if (_marker != value) { _marker = value; Invalidate(); } }
+        }
+
         public void SetFont(string fontName, bool bold, float emPixels)
         {
             if (_fontName == fontName && _bold == bold && Math.Abs(_emPixels - emPixels) < 0.25f) return;
@@ -37,6 +46,18 @@ namespace BingoCaller
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
+
+            if (_marker)
+            {
+                e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+                float r = Math.Max(4f, Width * 0.11f);
+                float x = Width - r * 2.6f, y = r * 0.6f;
+                using var dot = new SolidBrush(Color.FromArgb(240, 255, 255, 255));
+                using var rim = new Pen(Color.FromArgb(120, 0, 0, 0), 1f);
+                e.Graphics.FillEllipse(dot, x, y, r * 2, r * 2);
+                e.Graphics.DrawEllipse(rim, x, y, r * 2, r * 2);
+            }
+
             if (string.IsNullOrEmpty(Text) || _emPixels < 1f) return;
 
             using FontFamily family = ResolveFamily(_fontName, _bold, out FontStyle style);

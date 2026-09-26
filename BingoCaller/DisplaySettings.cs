@@ -13,6 +13,11 @@ namespace BingoCaller
         /// <summary>Device names of the monitors that showed the big screen last time.</summary>
         public List<string> BigScreens { get; set; } = new List<string>();
 
+        /// <summary>Shows the "Random draw" button on the caller window (a backup, e.g. when a physical ball is missing).</summary>
+        public bool EnableRandomDraw { get; set; }
+        /// <summary>Play the ticking and landing chime during the random draw.</summary>
+        public bool DrawSound { get; set; } = true;
+
         // ---- fonts / sizes (percent: 100 = default, 200 = double) ----
         public string NumberFont { get; set; } = "Segoe UI";
         public bool NumberBold { get; set; } = true;

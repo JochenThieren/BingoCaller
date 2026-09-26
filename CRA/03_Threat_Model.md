@@ -24,7 +24,9 @@ No network, no other processes, no registry, no secrets. Everything runs in one 
 | Installer integrity | Users must get what the author built |
 
 Not assets (nothing to protect): personal data, credentials, keys, financial data. Game fairness (whether the operator
-calls honest numbers) is an event-organisation matter, not a security property of the software.
+calls honest numbers) is an event-organisation matter, not a security property of the software. The optional *Random draw*
+picks a number with the operating system's cryptographic random generator, decides it before the reveal animation starts,
+and marks such numbers in the strip; it is a convenience backup, not a certified gaming device (README, Disclaimer).
 
 ## 3. Actors
 

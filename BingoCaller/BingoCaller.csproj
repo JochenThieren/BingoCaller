@@ -7,6 +7,9 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
 
+    <!-- Icon of the exe (Explorer, taskbar, Alt-Tab). The same file is embedded so the forms can use it (AppIcon.cs). -->
+    <ApplicationIcon>BingoCaller.ico</ApplicationIcon>
+
     <!-- Product identity. Keep <Version> in sync with MyAppVersion in BingoCaller_INNO.iss and CHANGELOG.md. -->
     <Version>1.0.0</Version>
     <Authors>Jochen Thieren</Authors>
@@ -14,5 +17,9 @@
     <Description>Bingo number caller with a big-screen display for a projector or TV: slideshow background, scrolling sponsor banner and logos, multi-monitor support.</Description>
     <Copyright>Copyright (c) 2026 Jochen Thieren</Copyright>
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="BingoCaller.ico" LogicalName="BingoCaller.ico" />
+  </ItemGroup>
 
 </Project>

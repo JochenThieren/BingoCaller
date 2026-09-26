@@ -12,7 +12,7 @@ at version 1.0.0: `Program.cs`, `Mainform.cs`, `DisplayForm.cs`, `BackdropPanel.
 | Network access (`HttpClient`, `WebClient`, sockets) | **None.** No network API is referenced anywhere. |
 | Process / shell launch (`Process.Start`, `ShellExecute`) | **None.** |
 | Registry, environment variables | **None used.** |
-| Cryptography, key material | **None used** — nothing to misconfigure; nothing is encrypted or signed. |
+| Cryptography, key material | **None used**, except the optional random-draw button (added after this review, see the addendum): it calls `RandomNumberGenerator.GetInt32` only to pick a number. No keys, nothing encrypted or signed. |
 | Hardcoded secrets, keys, passwords, salts | **None found.** |
 | SQL / database | **None.** |
 | Deserialisation of untrusted data | Only `System.Text.Json` into one typed class (`DisplaySettings`); no polymorphic/`object`/BinaryFormatter use. |
@@ -80,3 +80,19 @@ at version 1.0.0: `Program.cs`, `Mainform.cs`, `DisplayForm.cs`, `BackdropPanel.
 No Critical, High or Medium findings. Four Low findings (accepted, with concrete hardening options above) and two
 Informational notes. Recommended hardening, in order: pixel cap on image load → refuse UNC paths from the settings file →
 `validateImageData: true` → code signing.
+
+## Addendum — optional random draw (added after the 1.0.0 review)
+
+- **What it does:** a *Random draw* button (off by default) picks one not-yet-called number with
+  `System.Security.Cryptography.RandomNumberGenerator.GetInt32` (`MainForm.PickRandom`) — uniform, with no modulo bias — and reveals it
+  with an animation on the big screens.
+- **Design points checked:** the number is chosen **before** the animation starts and the animation only displays it, so timing or
+  interruption cannot change the result; the animation's own `System.Random` is used for the *visual* roll only; while a draw runs,
+  number buttons, Undo, Reset, Pause and the button itself are locked; randomly drawn numbers are marked in the strip.
+- **Tested:** 150,000 picks (worst count 3.2 standard deviations from uniform), 2,000 random game states (never returns a called
+  number), 75 consecutive draws give every number exactly once, one number left → that number, all called → none.
+- **Result:** no new attack surface (no input parsing, no I/O, no network). Reviewed as **Informational**.
+- **Sound (added with the draw):** the optional tick/chime is synthesised in memory (`DrawSound`: a 16-bit PCM WAV built from the
+  animation's own schedule) and played with `System.Media.SoundPlayer` from a `MemoryStream`. No audio files, no file or network
+  access, no user-controlled input; a missing audio device is caught and ignored. Tested: valid WAV, ticks land on the animation
+  frame times, no clipping, silent start/end, and the on/off setting is honoured.

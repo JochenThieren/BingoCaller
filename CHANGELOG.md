@@ -9,6 +9,23 @@ The version lives in `BingoCaller/BingoCaller.csproj` (`<Version>`) and must mat
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **Random draw** (optional backup, off by default; *Options → Random draw*): a button picks one of the not-yet-called numbers with
+  the operating system's cryptographic random generator and reveals it with a ~3-second rolling animation on all big screens;
+  the number is then called automatically. Randomly drawn numbers get a small dot in the numbers strip. Controls are locked while
+  the animation runs. Optional **sound** (on by default, switchable, with a *Play sample* button): ticks that slow down with the
+  roll, then a chime. It is synthesised in code, so no audio files are shipped.
+- Application icon: on the exe (Explorer, taskbar), on every window and dialog, and on the installer wizard.
+- Screenshots and dummy sponsor logos/pictures for the documentation (`docs/screenshots/`, `assets/`).
+
+### Fixed
+
+- Caller window: the status text ("Last call … (N of 75 called)") wrapped onto two lines; the default window is now wider.
+- Options window: the "Numbers strip opacity" label and the note on the Banner tab were clipped.
+
 ## [1.0.0] — 2026-09-26
 
 First public release.

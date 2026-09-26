@@ -16,6 +16,7 @@ namespace BingoCaller
             _screens = screens;
 
             Text = "Choose the big screens";
+            Icon = AppIcon.Get();
             FormBorderStyle = FormBorderStyle.FixedDialog;
             StartPosition = FormStartPosition.CenterParent;
             MinimizeBox = false;
